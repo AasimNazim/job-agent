@@ -2,8 +2,8 @@ name: Scheduled Job Outreach Agent
 
 on:
   schedule:
-    # 04:30 UTC = 09:30 AM PKT
-    - cron: '30 4 * * 2,4'
+    # 04:30 UTC (09:30 AM PKT), 09:30 UTC (02:30 PM PKT), and 14:30 UTC (07:30 PM PKT) on Mon-Fri
+    - cron: '30 4,9,14 * * 1-5'
   workflow_dispatch: # Allows manual trigger for testing
 
 jobs:
