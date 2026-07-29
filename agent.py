@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import json
 import random
@@ -109,11 +110,12 @@ def add_processed_job(job_url):
         df.to_csv(PROCESSED_JOBS_FILE, mode='a', header=False, index=False)
 
 
-def create_draft(service, subject, body, attachment_path):
+def create_draft(service, subject, body, attachment_path, to_email=None):
     try:
         message = EmailMessage()
         message.set_content(body)
-        # message['To'] = ""  # Left empty for drafts if no specific email is scraped
+        if to_email:
+            message['To'] = to_email
         message['Subject'] = subject
         
         with open(attachment_path, 'rb') as f:
@@ -176,8 +178,15 @@ def main():
 
                 company = row.get("company", "the company")
                 title = row.get("title", search_term)
+                description = str(row.get("description", ""))
+                
+                # Extract email if present in the job description
+                email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', description)
+                to_email = email_match.group(0) if email_match else None
                 
                 print(f"Found new match: {title} at {company}")
+                if to_email:
+                    print(f"Extracted contact email: {to_email}")
                 
                 subject = f"Application for Internship Opportunity - {title} / {company}"
                 body = f"""Dear Hiring Team,
@@ -195,7 +204,7 @@ Best regards,
                 # Use the first matched resume for this domain
                 resume_to_attach = resume_paths[0]
                 
-                draft = create_draft(service, subject, body, resume_to_attach)
+                draft = create_draft(service, subject, body, resume_to_attach, to_email)
                 if draft:
                     print(f"Draft created for {title} at {company}. (Draft ID: {draft['id']})")
                     add_processed_job(job_url)
