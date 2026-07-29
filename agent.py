@@ -21,9 +21,9 @@ RESUMES_DIR = "Resume"
 DOMAINS = {
     "Flutter/Mobile": ["flutter", "dart", "android", "ios", "mobile app"],
     "AI/ML/Data Science": ["machine learning", "ai", "python", "pytorch", "tensorflow", "data science"],
-    "IT/Security/Networks": ["security", "networking", "cisco", "cyber", "it support"],
-    "Product/Agile/UI/UX": ["product manager", "agile", "scrum", "figma", "ui/ux", "user experience"],
-    "Core Software Engineering": ["software engineer", "backend", "java", "c++", "node.js", "full stack"]
+    "Bank/IT Support": ["bank", "networking", "cisco", "it support", "information technology"],
+    "Product Management": ["product manager", "agile", "scrum", "figma", "ui/ux", "user experience"],
+    "Software Development": ["software development", "backend", "python", "frontend", "web developer"]
 }
 
 def get_gmail_service():
@@ -179,14 +179,14 @@ def main():
                 
                 print(f"Found new match: {title} at {company}")
                 
-                subject = f"Application for {title} Role"
+                subject = f"Application for Internship Opportunity - {title} / {company}"
                 body = f"""Dear Hiring Team,
 
-I hope this email finds you well. I came across the {title} opening at {company} and believe my background aligns strongly with your requirements. 
+I hope this email finds you well. I came across the {title} opening at {company}. While I realize this may be a full-time posting, I am highly interested in joining {company} and would love to be considered for an internship position in this department.
 
-I have a proven track record of delivering results and am highly motivated to bring my skills to your team. Please find my resume attached for more details regarding my technical expertise and professional experience.
+I have a strong foundation in these technologies and am highly motivated to bring my skills to your team as an intern. Please find my resume attached for more details regarding my technical expertise and academic projects.
 
-I look forward to discussing how I can contribute to {company}'s ongoing success. 
+I would welcome the opportunity to discuss how I can contribute to {company}'s ongoing success as an intern. 
 
 Thank you for your time and consideration.
 
