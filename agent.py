@@ -102,7 +102,7 @@ def get_jooble_jobs(search_term, location="Karachi"):
         print("Error: JOOBLE_API_KEY environment variable is not set. Please set it to your Jooble API key.")
         return []
         
-    api_url = f"https://jooble.org/api/{api_key}"
+    api_url = f"https://pk.jooble.org/api/{api_key}"
     payload = {
         "keywords": search_term,
         "location": location,
