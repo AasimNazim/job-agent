@@ -156,8 +156,7 @@ def main():
         print(f"Scraping jobs for {domain}...")
         search_term = DOMAINS[domain][0] # use the primary keyword as search term
         try:
-            scraper_api_key = os.getenv("SCRAPERAPI_KEY")
-            proxy_url = f"http://scraperapi:{scraper_api_key}@proxy-server.scraperapi.com:8001" if scraper_api_key else None
+            proxy_url = os.getenv("PROXY_URL")
             proxies = [proxy_url] if proxy_url else None
             
             jobs = scrape_jobs(
