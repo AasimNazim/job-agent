@@ -7,7 +7,7 @@ import base64
 import pandas as pd
 from pypdf import PdfReader
 from email.message import EmailMessage
-import requests
+from jobspy import scrape_jobs
 
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -96,32 +96,6 @@ def parse_and_classify_resumes():
     return classified_resumes
 
 
-def get_jooble_jobs(search_term, location="Karachi"):
-    api_key = os.getenv("JOOBLE_API_KEY")
-    if not api_key:
-        print("Error: JOOBLE_API_KEY environment variable is not set. Please set it to your Jooble API key.")
-        return []
-        
-    api_url = f"https://pk.jooble.org/api/{api_key}"
-    payload = {
-        "keywords": search_term,
-        "location": location,
-        "page": "1"
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(api_url, data=json.dumps(payload), headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return data.get("jobs", [])
-    except Exception as e:
-        print(f"Error fetching jobs from Jooble: {e}")
-        return []
-
-
 def get_processed_jobs():
     if os.path.exists(PROCESSED_JOBS_FILE):
         return pd.read_csv(PROCESSED_JOBS_FILE)["job_url"].tolist()
@@ -182,23 +156,34 @@ def main():
         print(f"Scraping jobs for {domain}...")
         search_term = DOMAINS[domain][0] # use the primary keyword as search term
         try:
-            jobs = get_jooble_jobs(search_term, location="Karachi")
+            scraper_api_key = os.getenv("SCRAPERAPI_KEY")
+            proxy_url = f"http://scraperapi:{scraper_api_key}@proxy-server.scraperapi.com:8001" if scraper_api_key else None
+            proxies = [proxy_url] if proxy_url else None
             
-            if not jobs:
+            jobs = scrape_jobs(
+                site_name=["linkedin", "indeed", "glassdoor"],
+                search_term=search_term,
+                location="Karachi",
+                results_wanted=10,
+                country_linkedin="pk",
+                proxies=proxies
+            )
+            
+            if jobs.empty:
                 print(f"No jobs found for {domain}")
                 continue
 
-            for job in jobs:
+            for _, row in jobs.iterrows():
                 if drafts_created >= MAX_DRAFTS:
                     break
 
-                job_url = job.get("link")
-                if not job_url or job_url in processed_urls:
+                job_url = row.get("job_url")
+                if pd.isna(job_url) or job_url in processed_urls:
                     continue
 
-                company = job.get("company", "the company")
-                title = job.get("title", search_term)
-                description = str(job.get("snippet", ""))
+                company = row.get("company", "the company")
+                title = row.get("title", search_term)
+                description = str(row.get("description", ""))
                 
                 # Extract email if present in the job description
                 email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', description)

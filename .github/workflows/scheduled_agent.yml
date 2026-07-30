@@ -28,6 +28,6 @@ jobs:
     - name: Run Job Outreach Agent
       env:
         GMAIL_TOKEN_JSON: ${{ secrets.GMAIL_TOKEN_JSON }}
-        JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
+        SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
       run: |
         python agent.py
