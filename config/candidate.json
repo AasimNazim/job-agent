@@ -1,0 +1,38 @@
+{
+  "full_name": "Aasim Nazim",
+  "email": "aasimnazim@example.com",
+  "phone": "+923000000000",
+  "linkedin_url": "https://linkedin.com/in/aasimnazim",
+  "github_url": "https://github.com/aasimnazim",
+  "portfolio_url": "https://aasimnazim.com",
+  "education_level": "Undergraduate",
+  "graduation_year": 2025,
+  "skills_summary": "Python, React, Machine Learning, TypeScript, Flutter, Product Management",
+  "resumes": [
+    {
+      "domain_name": "data_science",
+      "file_path": "Resume/Ai Data Data Science Resume/Aasim_Nazim_Resume.pdf",
+      "tags": ["machine learning", "data science", "ai", "python", "pandas"]
+    },
+    {
+      "domain_name": "bank_it",
+      "file_path": "Resume/Bank_IT Resume/Aasim_Nazim_Resume.pdf",
+      "tags": ["it", "banking", "finance", "security", "infrastructure"]
+    },
+    {
+      "domain_name": "flutter_mobile",
+      "file_path": "Resume/Flutter Resume/Aasim_Nazim_Resume.pdf",
+      "tags": ["flutter", "mobile", "dart", "ios", "android"]
+    },
+    {
+      "domain_name": "software_engineering",
+      "file_path": "Resume/Software Development Resume/Aasim Nazim_Resume.pdf",
+      "tags": ["software engineering", "development", "backend", "frontend", "fullstack"]
+    },
+    {
+      "domain_name": "product_management",
+      "file_path": "Resume/Technical Product Management Resume/Aasim Nazim_Resum.pdf",
+      "tags": ["product management", "pm", "agile", "scrum", "strategy"]
+    }
+  ]
+}

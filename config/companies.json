@@ -1,0 +1,32 @@
+[
+  {
+    "name": "10Pearls",
+    "career_url": "https://10pearls.applytojob.com",
+    "platform": "jazzhr",
+    "enabled": true
+  },
+  {
+    "name": "Systems Limited",
+    "career_url": "https://systemsltd.com/careers",
+    "platform": "custom",
+    "enabled": true
+  },
+  {
+    "name": "Folio3",
+    "career_url": "https://folio3.workable.com",
+    "platform": "workable",
+    "enabled": true
+  },
+  {
+    "name": "VentureDive",
+    "career_url": "https://boards.greenhouse.io/venturedive",
+    "platform": "greenhouse",
+    "enabled": true
+  },
+  {
+    "name": "Habib Bank Technology HBL",
+    "career_url": "https://hbl.rozee.pk",
+    "platform": "rozee",
+    "enabled": true
+  }
+]

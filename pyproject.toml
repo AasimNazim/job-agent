@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "job_agent"
+version = "0.1.0"
+description = "Autonomous Personal Entry-Level Job Agent"
+authors = [{name = "Aasim Nazim"}]
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.4.2",
+    "pydantic-settings>=2.0.3",
+    "sqlalchemy>=2.0.21",
+    "alembic>=1.12.0",
+    "python-dotenv>=1.0.0",
+    "httpx>=0.25.0",
+    "PyMuPDF>=1.23.0",
+    "google-genai>=0.2.0",
+    "google-api-python-client>=2.100.0",
+    "google-auth-httplib2>=0.1.1",
+    "google-auth-oauthlib>=1.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.2",
+    "pytest-asyncio>=0.21.1",
+    "pytest-httpx>=0.26.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

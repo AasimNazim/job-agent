@@ -1,38 +1,27 @@
-# Environment & Virtual Environments
-.env
-*.env
-.venv
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Project Specific
-processed_jobs.csv
-
-# Security Credentials
-token.json
-credentials.json
-client_secret.json
-
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Database
+*.db
+!job_agent.db
+*.sqlite3
+
+# Project specific
+token.json
+credentials.json
+resumes/*.pdf
+!resumes/.gitkeep
+!resumes/README.md
+
+# OS generated files
+.DS_Store
+Thumbs.db
