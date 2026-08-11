@@ -97,11 +97,11 @@ async def async_main():
             pushed_count = gmail_service.process_pending_drafts()
             logger.info(f"Successfully pushed {pushed_count} drafts to Gmail.")
             
-            # Send email notifications for the created drafts
-            logger.info("Sending Gmail notifications for new drafts...")
-            candidate_email = candidate.profile_data.get("email")
-            notif_count = gmail_service.process_pending_notifications(candidate_email)
-            logger.info(f"Sent {notif_count} email notifications.")
+            # Send email notifications for the created drafts (DISABLED FOR SAFE TEST)
+            # logger.info("Sending Gmail notifications for new drafts...")
+            # candidate_email = candidate.profile_data.get("email")
+            # notif_count = gmail_service.process_pending_notifications(candidate_email)
+            # logger.info(f"Sent {notif_count} email notifications.")
             
         else:
             logger.warning("Gmail service not authenticated. Skipping Gmail push.")
