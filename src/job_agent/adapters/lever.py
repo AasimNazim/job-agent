@@ -36,10 +36,10 @@ class LeverAdapter(JobSourceAdapter):
                 data = response.json()
         except httpx.RequestError as e:
             logger.error(f"HTTP error fetching Lever jobs for {company.name}: {e}")
-            return []
+            raise
         except Exception as e:
             logger.error(f"Error fetching Lever jobs for {company.name}: {e}")
-            return []
+            raise
             
         jobs = []
         # Lever API returns a list of jobs directly (not wrapped in a "jobs" key)

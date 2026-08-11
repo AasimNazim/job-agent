@@ -3,7 +3,7 @@
     "name": "Systems Limited",
     "career_url": "https://systemsltd.com/careers",
     "platform": "custom",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "10Pearls",
@@ -13,92 +13,92 @@
   },
   {
     "name": "Arbisoft",
-    "career_url": "https://boards.greenhouse.io/arbisoft",
-    "platform": "greenhouse",
+    "career_url": "https://arbisoft.hirestream.io/careers/",
+    "platform": "hirestream",
     "enabled": true
   },
   {
     "name": "VentureDive",
-    "career_url": "https://boards.greenhouse.io/venturedive",
-    "platform": "greenhouse",
+    "career_url": "https://venturedive.applytojob.com",
+    "platform": "jazzhr",
     "enabled": true
   },
   {
     "name": "Contour Software",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "NETSOL Technologies",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Folio3",
-    "career_url": "https://folio3.workable.com",
+    "career_url": "https://apply.workable.com/folio3",
     "platform": "workable",
     "enabled": true
   },
   {
     "name": "Creative Chaos",
-    "career_url": "",
-    "platform": "unsupported",
+    "career_url": "https://apply.workable.com/creativechaos",
+    "platform": "workable",
     "enabled": true
   },
   {
     "name": "Confiz",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Avanza Solutions",
-    "career_url": "",
+    "career_url": "https://apply.workable.com/avanzasolutions",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "CureMD",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "TPS Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "TRG Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Tkxel",
     "career_url": "https://jobs.ashbyhq.com/tkxel",
-    "platform": "ashby",
-    "enabled": true
+    "platform": "unsupported",
+    "enabled": false
   },
   {
     "name": "VentureForce",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "S&P Global Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Afiniti",
-    "career_url": "https://boards.greenhouse.io/afiniti",
-    "platform": "greenhouse",
+    "career_url": "https://apply.workable.com/afiniti",
+    "platform": "workable",
     "enabled": true
   },
   {
@@ -117,210 +117,288 @@
     "name": "KeepTruckin / Motive",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Nisum",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "GfK / NIQ Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "i2c",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Unifonic",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Panacloud",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "KalSoft",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Arpatech",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Rolustech",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "HBL",
     "career_url": "https://hbl.rozee.pk",
     "platform": "rozee",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "UBL",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "MCB Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Meezan Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Bank Alfalah",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Bank Al Habib",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Faysal Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Allied Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Askari Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Standard Chartered Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "JS Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "HabibMetro",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Soneri Bank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "National Bank of Pakistan",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Silkbank",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "JazzCash",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Easypaisa",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "NayaPay",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "SadaPay",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Keenu",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "1LINK",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "PayFast",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Haball",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Finja",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Abhi",
     "career_url": "",
     "platform": "unsupported",
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "QistBazaar",
     "career_url": "",
     "platform": "unsupported",
+    "enabled": false
+  },
+  {
+    "name": "Pakistan Single Window",
+    "career_url": "https://apply.workable.com/pakistan-single-window",
+    "platform": "workable",
+    "enabled": true
+  },
+  {
+    "name": "JazzWorld",
+    "career_url": "https://apply.workable.com/jazzworld",
+    "platform": "unsupported",
+    "enabled": false
+  },
+  {
+    "name": "Tectonic",
+    "career_url": "https://apply.workable.com/tectonic",
+    "platform": "workable",
+    "enabled": true
+  },
+  {
+    "name": "AdalFi",
+    "career_url": "https://jobs.ashbyhq.com/AdalFi",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "Metal",
+    "career_url": "https://jobs.ashbyhq.com/metal",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "Hamster Garage",
+    "career_url": "https://jobs.ashbyhq.com/hamstergarage",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "Tajir",
+    "career_url": "https://jobs.ashbyhq.com/tajir",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "brightwheel",
+    "career_url": "https://jobs.ashbyhq.com/brightwheel",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "Game District",
+    "career_url": "https://gamedistrict.applytojob.com",
+    "platform": "jazzhr",
+    "enabled": true
+  },
+  {
+    "name": "ACE Money Transfer",
+    "career_url": "https://acemoneytransfer.applytojob.com",
+    "platform": "jazzhr",
+    "enabled": true
+  },
+  {
+    "name": "The Plum Tree Group",
+    "career_url": "https://plumtreegroup.applytojob.com",
+    "platform": "jazzhr",
+    "enabled": true
+  },
+  {
+    "name": "Careem",
+    "career_url": "https://boards.greenhouse.io/careem",
+    "platform": "greenhouse",
+    "enabled": true
+  },
+  {
+    "name": "Banyan Canopy Group",
+    "career_url": "https://boards.greenhouse.io/banyancanopygroup",
+    "platform": "greenhouse",
     "enabled": true
   }
 ]

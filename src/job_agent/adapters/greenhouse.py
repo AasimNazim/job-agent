@@ -36,10 +36,10 @@ class GreenhouseAdapter(JobSourceAdapter):
                 data = response.json()
         except httpx.RequestError as e:
             logger.error(f"HTTP error fetching Greenhouse jobs for {company.name}: {e}")
-            return []
+            raise
         except Exception as e:
             logger.error(f"Error fetching Greenhouse jobs for {company.name}: {e}")
-            return []
+            raise
             
         jobs = []
         jobs_list = data.get("jobs", [])

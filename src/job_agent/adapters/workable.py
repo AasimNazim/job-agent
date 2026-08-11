@@ -35,10 +35,10 @@ class WorkableAdapter(JobSourceAdapter):
                 data = response.json()
         except httpx.RequestError as e:
             logger.error(f"HTTP error fetching Workable jobs for {company.name}: {e}")
-            return []
+            raise
         except Exception as e:
             logger.error(f"Error fetching Workable jobs for {company.name}: {e}")
-            return []
+            raise
             
         jobs = []
         jobs_list = data.get("jobs", [])
