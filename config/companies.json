@@ -1,20 +1,20 @@
 [
   {
-    "name": "10Pearls",
-    "career_url": "https://10pearls.applytojob.com",
-    "platform": "jazzhr",
-    "enabled": true
-  },
-  {
     "name": "Systems Limited",
     "career_url": "https://systemsltd.com/careers",
     "platform": "custom",
     "enabled": true
   },
   {
-    "name": "Folio3",
-    "career_url": "https://folio3.workable.com",
-    "platform": "workable",
+    "name": "10Pearls",
+    "career_url": "https://10pearls.applytojob.com",
+    "platform": "jazzhr",
+    "enabled": true
+  },
+  {
+    "name": "Arbisoft",
+    "career_url": "https://boards.greenhouse.io/arbisoft",
+    "platform": "greenhouse",
     "enabled": true
   },
   {
@@ -24,9 +24,303 @@
     "enabled": true
   },
   {
-    "name": "Habib Bank Technology HBL",
+    "name": "Contour Software",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "NETSOL Technologies",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Folio3",
+    "career_url": "https://folio3.workable.com",
+    "platform": "workable",
+    "enabled": true
+  },
+  {
+    "name": "Creative Chaos",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Confiz",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Avanza Solutions",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "CureMD",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "TPS Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "TRG Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Tkxel",
+    "career_url": "https://jobs.ashbyhq.com/tkxel",
+    "platform": "ashby",
+    "enabled": true
+  },
+  {
+    "name": "VentureForce",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "S&P Global Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Afiniti",
+    "career_url": "https://boards.greenhouse.io/afiniti",
+    "platform": "greenhouse",
+    "enabled": true
+  },
+  {
+    "name": "Motive",
+    "career_url": "https://boards.greenhouse.io/motive",
+    "platform": "greenhouse",
+    "enabled": true
+  },
+  {
+    "name": "Educative",
+    "career_url": "https://jobs.lever.co/educative",
+    "platform": "lever",
+    "enabled": true
+  },
+  {
+    "name": "KeepTruckin / Motive",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Nisum",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "GfK / NIQ Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "i2c",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Unifonic",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Panacloud",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "KalSoft",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Arpatech",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Rolustech",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "HBL",
     "career_url": "https://hbl.rozee.pk",
     "platform": "rozee",
+    "enabled": true
+  },
+  {
+    "name": "UBL",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "MCB Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Meezan Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Bank Alfalah",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Bank Al Habib",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Faysal Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Allied Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Askari Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Standard Chartered Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "JS Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "HabibMetro",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Soneri Bank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "National Bank of Pakistan",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Silkbank",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "JazzCash",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Easypaisa",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "NayaPay",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "SadaPay",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Keenu",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "1LINK",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "PayFast",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Haball",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Finja",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "Abhi",
+    "career_url": "",
+    "platform": "unsupported",
+    "enabled": true
+  },
+  {
+    "name": "QistBazaar",
+    "career_url": "",
+    "platform": "unsupported",
     "enabled": true
   }
 ]
