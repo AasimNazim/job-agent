@@ -39,6 +39,24 @@ def test_deduplicator(db_session):
     count = db_session.query(Job).count()
     assert count == 3
 
+
+def test_deduplicator_skips_duplicate_hashes_within_same_batch(db_session):
+    deduplicator = JobDeduplicator(db_session)
+
+    jobs = [
+        Job(company_name="A", source="dummy", title="Job 1", url="url1", content_hash="shared-hash", status="NEW"),
+        Job(company_name="A", source="dummy", title="Job 1 duplicate", url="url1", content_hash="shared-hash", status="NEW"),
+        Job(company_name="B", source="dummy", title="Job 2", url="url2", content_hash="hash2", status="NEW"),
+    ]
+
+    stats = deduplicator.save_and_deduplicate(jobs)
+
+    assert stats["new_jobs"] == 2
+    assert stats["seen_jobs"] == 1
+    assert db_session.query(Job).count() == 2
+    assert db_session.query(Job).filter_by(content_hash="shared-hash").count() == 1
+    assert db_session.query(Job).filter_by(content_hash="hash2").count() == 1
+
 @pytest.mark.asyncio
 async def test_discovery_engine():
     AdapterRegistry.register("dummy", DummyFastAdapter)
