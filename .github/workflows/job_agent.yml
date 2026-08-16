@@ -10,6 +10,9 @@ on:
 
 jobs:
   run-agent:
+    concurrency:
+      group: autonomous-job-agent-${{ github.ref }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     
     # We need contents: write to be able to push the database back
@@ -52,6 +55,9 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # Sync to the latest remote branch before pushing generated DB state.
+          git fetch origin main --prune
+          git rebase origin/main || (echo "Rebase conflict while syncing with origin/main" && exit 1)
           # Ignore generated egg-info metadata produced by editable installs.
           git restore --staged --worktree src/job_agent.egg-info 2>/dev/null || true
           git add job_agent.db
@@ -61,4 +67,4 @@ jobs:
             exit 0
           fi
           git commit -m "chore: auto-update job_agent.db state [skip ci]"
-          git push
+          git push origin HEAD:main
