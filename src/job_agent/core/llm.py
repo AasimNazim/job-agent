@@ -14,7 +14,7 @@ class LLMService:
     Wrapper for Google GenAI API (Gemini).
     Provides structured JSON output capabilities.
     """
-    def __init__(self, api_key: str = None, model: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str = None, model: str = "gemini-3.5-flash-lite"):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY") or settings.gemini_api_key
         if not self.api_key:
             logger.warning("GEMINI_API_KEY is not set. LLM features will fail if called.")
