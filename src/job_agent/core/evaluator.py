@@ -10,6 +10,24 @@ from ..models.candidate import CandidateProfile, Resume
 
 logger = logging.getLogger(__name__)
 
+ENTRY_LEVEL_KEYWORDS = (
+    "intern",
+    "internship",
+    "internee",
+    "trainee",
+    "graduate trainee",
+    "management trainee",
+    "mto",
+    "fresh graduate",
+    "entry level",
+    "junior",
+    "apprentice",
+    "associate",
+    "graduate program",
+    "early careers",
+    "campus",
+)
+
 class EvaluationResult(BaseModel):
     is_entry_level: bool = Field(description="True if this job is suitable for a fresh graduate or entry-level candidate. False if it requires significant prior experience (e.g., 3+ years) or is a senior role.")
     confidence: float = Field(description="Confidence score between 0.0 and 1.0.")
@@ -33,12 +51,27 @@ class JobEvaluator:
         if not self.candidate:
             return []
         return self.db.query(Resume).all()
+
+    @staticmethod
+    def passes_entry_level_prefilter(job: Job) -> bool:
+        text = f"{job.title or ''} {job.description or ''}".lower()
+        return any(keyword in text for keyword in ENTRY_LEVEL_KEYWORDS)
         
     def evaluate_job(self, job: Job) -> bool:
         """
         Evaluates a single job. Updates the job state in the database.
         Returns True if matched, False otherwise.
         """
+        if job.status != "NEW":
+            logger.debug(f"Skipping already-evaluated job {job.id} with status={job.status}.")
+            return job.status == "MATCHED"
+
+        if not self.passes_entry_level_prefilter(job):
+            job.status = "IGNORED"
+            self.db.commit()
+            logger.debug(f"IGNORED by pre-filter: {job.title} at {job.company_name}")
+            return False
+
         if not self.candidate or not self.resumes:
             logger.error("Cannot evaluate job: Candidate profile or resumes missing.")
             return False

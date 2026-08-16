@@ -82,3 +82,90 @@ def test_evaluator_ignore(db_session):
     
     assert matched is False
     assert job.status == "IGNORED"
+
+
+def test_entry_level_prefilter_keywords(db_session):
+    candidate = CandidateProfile(profile_data={"skills_summary": "Python"}, career_level="entry_level")
+    db_session.add(candidate)
+    db_session.add(Resume(filename="test3.pdf", domains=["backend"]))
+    db_session.commit()
+
+    evaluator = JobEvaluator(db_session, MagicMock())
+
+    entry_job = Job(
+        company_name="TestComp",
+        source="test",
+        title="Campus Associate Software Engineer",
+        description="Early careers program for fresh graduate candidates.",
+        url="http://test.com/job3",
+        status="NEW",
+        content_hash="ghi"
+    )
+    non_entry_job = Job(
+        company_name="TestComp",
+        source="test",
+        title="Senior Staff Engineer",
+        description="Requires 8+ years and team leadership experience.",
+        url="http://test.com/job4",
+        status="NEW",
+        content_hash="jkl"
+    )
+
+    assert evaluator.passes_entry_level_prefilter(entry_job) is True
+    assert evaluator.passes_entry_level_prefilter(non_entry_job) is False
+
+
+def test_irrelevant_job_does_not_call_gemini(db_session):
+    candidate = CandidateProfile(profile_data={"skills_summary": "Python"}, career_level="entry_level")
+    db_session.add(candidate)
+    db_session.add(Resume(filename="test4.pdf", domains=["backend"]))
+    db_session.commit()
+
+    job = Job(
+        company_name="TestComp",
+        source="test",
+        title="Principal Engineering Manager",
+        description="10+ years required and managing multiple teams.",
+        url="http://test.com/job5",
+        status="NEW",
+        content_hash="mno"
+    )
+    db_session.add(job)
+    db_session.commit()
+
+    mock_llm = MagicMock()
+    evaluator = JobEvaluator(db_session, mock_llm)
+
+    matched = evaluator.evaluate_job(job)
+
+    assert matched is False
+    assert job.status == "IGNORED"
+    mock_llm.generate_structured_response.assert_not_called()
+
+
+def test_already_evaluated_job_does_not_call_gemini(db_session):
+    candidate = CandidateProfile(profile_data={"skills_summary": "Python"}, career_level="entry_level")
+    db_session.add(candidate)
+    db_session.add(Resume(filename="test5.pdf", domains=["backend"]))
+    db_session.commit()
+
+    job = Job(
+        company_name="TestComp",
+        source="test",
+        title="Junior Backend Engineer",
+        description="Entry level backend role.",
+        url="http://test.com/job6",
+        status="MATCHED",
+        selected_resume="backend",
+        content_hash="pqr"
+    )
+    db_session.add(job)
+    db_session.commit()
+
+    mock_llm = MagicMock()
+    evaluator = JobEvaluator(db_session, mock_llm)
+
+    matched = evaluator.evaluate_job(job)
+
+    assert matched is True
+    mock_llm.generate_structured_response.assert_not_called()

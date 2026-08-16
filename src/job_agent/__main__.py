@@ -15,17 +15,61 @@ from .core.gmail import GmailService
 from .models.company import Company
 from .models.job import Job
 
+MAX_NEW_GEMINI_EVALUATIONS_PER_RUN = 20
+MAX_DRAFT_GENERATIONS_PER_RUN = 5
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
+
+def evaluate_jobs_with_limits(new_jobs, evaluator, llm, max_evaluations):
+    prefiltered_jobs = [job for job in new_jobs if evaluator.passes_entry_level_prefilter(job)]
+    evaluation_jobs = prefiltered_jobs[:max_evaluations]
+
+    matched_count = 0
+    for job in evaluation_jobs:
+        if evaluator.evaluate_job(job):
+            matched_count += 1
+
+    return {
+        "jobs_after_prefilter": len(prefiltered_jobs),
+        "sent_to_gemini": len(evaluation_jobs),
+        "matched_jobs": matched_count,
+        "gemini_successes": llm.success_count,
+        "retries_429": llm.retry_429_count,
+        "gemini_failures": llm.failure_count,
+    }
+
+
+def generate_drafts_with_limit(matched_jobs, generator, max_generations):
+    generation_jobs = matched_jobs[:max_generations]
+    drafts_generated = 0
+    for job in generation_jobs:
+        app = generator.generate_draft(job)
+        if app:
+            drafts_generated += 1
+    return drafts_generated
+
 async def async_main():
     """
     The main autonomous loop for the Job Agent.
     """
     logger.info("Initializing Autonomous Job Agent...")
+    metrics = {
+        "jobs_discovered": 0,
+        "jobs_after_prefilter": 0,
+        "already_evaluated": 0,
+        "sent_to_gemini": 0,
+        "gemini_successes": 0,
+        "retries_429": 0,
+        "gemini_failures": 0,
+        "matched_jobs": 0,
+        "drafts_generated": 0,
+        "gmail_drafts_pushed": 0,
+    }
     
     # 1. Initialize Database
     init_db()
@@ -56,12 +100,14 @@ async def async_main():
         logger.info("Starting concurrent job discovery...")
         engine = DiscoveryEngine(max_concurrent=5)
         scraped_jobs = await engine.run_discovery(companies)
+        metrics["jobs_discovered"] = len(scraped_jobs)
         
         # 5. Deduplication
         logger.info("Deduplicating and saving jobs...")
         deduplicator = JobDeduplicator(db)
         stats = deduplicator.save_and_deduplicate(scraped_jobs)
         logger.info(f"Discovery complete. New jobs added: {stats['new_jobs']}")
+        metrics["already_evaluated"] = stats["seen_jobs"]
         
         # 6. Job Evaluation
         logger.info("Evaluating NEW jobs with LLM...")
@@ -70,23 +116,26 @@ async def async_main():
         
         # Fetch only NEW jobs
         new_jobs = db.query(Job).filter_by(status="NEW").all()
-        matched_count = 0
-        for job in new_jobs:
-            if evaluator.evaluate_job(job):
-                matched_count += 1
-                
-        logger.info(f"Evaluation complete. Found {matched_count} matching entry-level jobs.")
+        evaluation_stats = evaluate_jobs_with_limits(
+            new_jobs,
+            evaluator,
+            llm,
+            MAX_NEW_GEMINI_EVALUATIONS_PER_RUN,
+        )
+        metrics.update(evaluation_stats)
+
+        logger.info(f"Evaluation complete. Found {metrics['matched_jobs']} matching entry-level jobs.")
         
         # 7. Generate Applications
         logger.info("Generating application drafts for MATCHED jobs...")
         generator = ApplicationGenerator(db, llm)
         matched_jobs = db.query(Job).filter_by(status="MATCHED").all()
-        
-        drafts_generated = 0
-        for job in matched_jobs:
-            app = generator.generate_draft(job)
-            if app:
-                drafts_generated += 1
+        drafts_generated = generate_drafts_with_limit(
+            matched_jobs,
+            generator,
+            MAX_DRAFT_GENERATIONS_PER_RUN,
+        )
+        metrics["drafts_generated"] = drafts_generated
                 
         logger.info(f"Generated {drafts_generated} new application drafts.")
         
@@ -96,6 +145,7 @@ async def async_main():
         if gmail_service.service:
             pushed_count = gmail_service.process_pending_drafts()
             logger.info(f"Successfully pushed {pushed_count} drafts to Gmail.")
+            metrics["gmail_drafts_pushed"] = pushed_count
             
             # Send email notifications for the created drafts (DISABLED FOR SAFE TEST)
             # logger.info("Sending Gmail notifications for new drafts...")
@@ -105,6 +155,17 @@ async def async_main():
             
         else:
             logger.warning("Gmail service not authenticated. Skipping Gmail push.")
+
+        logger.info(f"Jobs discovered: {metrics['jobs_discovered']}")
+        logger.info(f"Jobs after pre-filter: {metrics['jobs_after_prefilter']}")
+        logger.info(f"Already evaluated: {metrics['already_evaluated']}")
+        logger.info(f"Sent to Gemini: {metrics['sent_to_gemini']}")
+        logger.info(f"Gemini successes: {metrics['gemini_successes']}")
+        logger.info(f"429 retries: {metrics['retries_429']}")
+        logger.info(f"Gemini failures: {metrics['gemini_failures']}")
+        logger.info(f"Matched jobs: {metrics['matched_jobs']}")
+        logger.info(f"Drafts generated: {metrics['drafts_generated']}")
+        logger.info(f"Gmail drafts pushed: {metrics['gmail_drafts_pushed']}")
             
         logger.info("Autonomous loop completed successfully.")
 
