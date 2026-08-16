@@ -53,5 +53,6 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add job_agent.db
-          # Only commit and push if there are changes to the DB
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update job_agent.db state [skip ci]" && git push)
+          # Only commit and push when the database actually changed.
+          # Ignore generated egg-info metadata so it cannot fail the job.
+          git diff --cached --quiet -- job_agent.db || (git commit -m "chore: auto-update job_agent.db state [skip ci]" && git push)
