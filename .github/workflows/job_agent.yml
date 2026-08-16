@@ -23,7 +23,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          # Important: Fetch full history so we can commit
+          # Important: Fetch full history so we can commit and re-sync against main.
+          ref: main
           fetch-depth: 0
 
       - name: Set up Python
@@ -53,11 +54,11 @@ jobs:
           
       - name: Commit and Push Database State
         run: |
+          set -e
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          # Sync to the latest remote branch before pushing generated DB state.
           git fetch origin main --prune
-          git rebase origin/main || (echo "Rebase conflict while syncing with origin/main" && exit 1)
+          git pull --rebase origin main
           # Ignore generated egg-info metadata produced by editable installs.
           git restore --staged --worktree src/job_agent.egg-info 2>/dev/null || true
           git add job_agent.db
