@@ -18,6 +18,7 @@ ENV/
 # Project specific
 token.json
 credentials.json
+new_credentials.json
 resumes/*.pdf
 !resumes/.gitkeep
 !resumes/README.md
