@@ -11,6 +11,9 @@ class Application(Base):
     
     draft_subject = Column(String, nullable=True)
     draft_body = Column(String, nullable=True)
+    recruiter_email = Column(String, nullable=True)
+    recruiter_email_status = Column(String, nullable=False, default="NOT_FOUND")
+    recruiter_email_source = Column(String, nullable=True)
     gmail_draft_id = Column(String, nullable=True)
     status = Column(String, default="DRAFT_CREATED")
     notification_sent = Column(Boolean, default=False)

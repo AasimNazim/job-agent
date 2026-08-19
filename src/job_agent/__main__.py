@@ -12,6 +12,7 @@ from .core.llm import LLMService
 from .core.evaluator import JobEvaluator
 from .core.generator import ApplicationGenerator
 from .core.gmail import GmailService
+from .core.recruiter_email import RecruiterEmailDiscovery
 from .models.company import Company
 from .models.job import Job
 
@@ -69,6 +70,8 @@ async def async_main():
         "matched_jobs": 0,
         "drafts_generated": 0,
         "gmail_drafts_pushed": 0,
+        "recruiter_emails_verified": 0,
+        "recruiter_emails_not_found": 0,
     }
     
     # 1. Initialize Database
@@ -128,7 +131,8 @@ async def async_main():
         
         # 7. Generate Applications
         logger.info("Generating application drafts for MATCHED jobs...")
-        generator = ApplicationGenerator(db, llm)
+        recruiter_email_service = RecruiterEmailDiscovery()
+        generator = ApplicationGenerator(db, llm, recruiter_email_service)
         matched_jobs = db.query(Job).filter_by(status="MATCHED").all()
         drafts_generated = generate_drafts_with_limit(
             matched_jobs,
@@ -136,6 +140,8 @@ async def async_main():
             MAX_DRAFT_GENERATIONS_PER_RUN,
         )
         metrics["drafts_generated"] = drafts_generated
+        metrics["recruiter_emails_verified"] = recruiter_email_service.verified_count if hasattr(recruiter_email_service, "verified_count") else 0
+        metrics["recruiter_emails_not_found"] = recruiter_email_service.not_found_count if hasattr(recruiter_email_service, "not_found_count") else 0
                 
         logger.info(f"Generated {drafts_generated} new application drafts.")
         
@@ -163,9 +169,11 @@ async def async_main():
         logger.info(f"Gemini successes: {metrics['gemini_successes']}")
         logger.info(f"429 retries: {metrics['retries_429']}")
         logger.info(f"Gemini failures: {metrics['gemini_failures']}")
-        logger.info(f"Matched jobs: {metrics['matched_jobs']}")
+        logger.info(f"Entry-level jobs matched: {metrics['matched_jobs']}")
         logger.info(f"Drafts generated: {metrics['drafts_generated']}")
-        logger.info(f"Gmail drafts pushed: {metrics['gmail_drafts_pushed']}")
+        logger.info(f"Gmail drafts created: {metrics['gmail_drafts_pushed']}")
+        logger.info(f"Recruiter emails verified: {metrics['recruiter_emails_verified']}")
+        logger.info(f"Recruiter emails not found: {metrics['recruiter_emails_not_found']}")
             
         logger.info("Autonomous loop completed successfully.")
 

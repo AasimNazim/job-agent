@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from ..config import settings
 from ..models.base import Base
@@ -20,6 +20,17 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    if engine.dialect.name == "sqlite":
+        existing_columns = {column["name"] for column in inspect(engine).get_columns("applications")}
+        additions = {
+            "recruiter_email": "VARCHAR",
+            "recruiter_email_status": "VARCHAR NOT NULL DEFAULT 'NOT_FOUND'",
+            "recruiter_email_source": "VARCHAR",
+        }
+        with engine.begin() as connection:
+            for column_name, column_type in additions.items():
+                if column_name not in existing_columns:
+                    connection.execute(text(f"ALTER TABLE applications ADD COLUMN {column_name} {column_type}"))
 
 def get_db():
     db = SessionLocal()

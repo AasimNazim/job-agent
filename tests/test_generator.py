@@ -53,7 +53,7 @@ def test_generate_draft(db_session):
     
     assert application is not None
     assert application.status == "DRAFT_CREATED"
-    assert application.draft_subject == "Application for Junior Backend Engineer - Test Candidate"
+    assert application.draft_subject == "Application for Junior Backend Engineer - TestComp"
     assert "Dear Hiring Manager" in application.draft_body
     
     # Check job status updated
@@ -62,4 +62,4 @@ def test_generate_draft(db_session):
     # Verify DB persistence
     db_app = db_session.query(Application).filter_by(job_id=job.id).first()
     assert db_app is not None
-    assert db_app.draft_subject == "Application for Junior Backend Engineer - Test Candidate"
+    assert db_app.draft_subject == "Application for Junior Backend Engineer - TestComp"

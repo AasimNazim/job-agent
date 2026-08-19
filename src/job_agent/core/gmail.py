@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from ..models.application import Application
 from ..models.candidate import Resume
 from ..models.job import Job
+from .recruiter_email import RecruiterEmailDiscovery
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,14 @@ class GmailService:
         message = EmailMessage()
         message.set_content(application.draft_body)
         
-        message['To'] = 'careers@example.com' # Ideally we would extract a real email, but for now we draft it for manual review
+        if RecruiterEmailDiscovery.is_verified_email(
+            application.recruiter_email,
+            application.recruiter_email_status,
+            application.recruiter_email_source,
+        ):
+            message['To'] = application.recruiter_email
+        else:
+            logger.info("[EMAIL] Gmail draft created for manual recipient: %s", job.title)
         message['Subject'] = application.draft_subject
         
         # Attach the PDF resume if available

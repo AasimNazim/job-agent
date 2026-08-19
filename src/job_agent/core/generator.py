@@ -7,6 +7,8 @@ from .llm import LLMService
 from ..models.job import Job
 from ..models.candidate import CandidateProfile, Resume
 from ..models.application import Application
+from ..models.company import Company
+from .recruiter_email import RecruiterEmailDiscovery
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +20,10 @@ class ApplicationGenerator:
     """
     Uses the LLM to generate highly tailored application drafts.
     """
-    def __init__(self, db: Session, llm_service: LLMService):
+    def __init__(self, db: Session, llm_service: LLMService, recruiter_email_service: Optional[RecruiterEmailDiscovery] = None):
         self.db = db
         self.llm = llm_service
+        self.recruiter_email_service = recruiter_email_service
         self.candidate = self._load_candidate()
         
     def _load_candidate(self) -> CandidateProfile:
@@ -80,14 +83,29 @@ class ApplicationGenerator:
         
         try:
             result: EmailDraftResult = self.llm.generate_structured_response(prompt, EmailDraftResult)
+
+            email_result = None
+            if self.recruiter_email_service:
+                company = self.db.query(Company).filter_by(name=job.company_name).first()
+                email_result = self.recruiter_email_service.discover(job, company.career_url if company else None)
+
+            recruiter_email = email_result.email if email_result and email_result.status == "VERIFIED" else None
+            recruiter_status = email_result.status if email_result else "NOT_FOUND"
+            recruiter_source = email_result.source_url if email_result else None
+            body = result.body
+            if recruiter_status == "NOT_FOUND":
+                body += f"\n\nJob URL: {job.url}\nCompany: {job.company_name}\nJob title: {job.title}\nRecruiter email could not be verified automatically."
             
             # Create Application record
             application = Application(
                 job_id=job.id,
                 resume_id=resume.id if resume else None,
                 status="DRAFT_CREATED",
-                draft_subject=result.subject,
-                draft_body=result.body
+                draft_subject=f"Application for {job.title} - {job.company_name}",
+                draft_body=body,
+                recruiter_email=recruiter_email,
+                recruiter_email_status=recruiter_status,
+                recruiter_email_source=recruiter_source,
             )
             self.db.add(application)
             

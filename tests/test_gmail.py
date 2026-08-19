@@ -5,6 +5,9 @@ from job_agent.core.gmail import GmailService
 from job_agent.models.application import Application
 from job_agent.models.job import Job
 from job_agent.models.candidate import Resume
+from email import policy
+from email.parser import BytesParser
+import base64
 
 @pytest.fixture
 def dummy_pdf_for_gmail(tmp_path):
@@ -34,7 +37,10 @@ def test_create_draft(db_session, dummy_pdf_for_gmail):
         resume_id=resume.id,
         draft_subject="Test Subject",
         draft_body="Test Body",
-        status="DRAFT_CREATED"
+        status="DRAFT_CREATED",
+        recruiter_email="recruiter@testcomp.test",
+        recruiter_email_status="VERIFIED",
+        recruiter_email_source="https://testcomp.test/careers"
     )
     db_session.add(application)
     db_session.commit()
@@ -60,6 +66,29 @@ def test_create_draft(db_session, dummy_pdf_for_gmail):
             assert success is True
             assert application.gmail_draft_id == "mock_draft_123"
             assert application.status == "DRAFT_SAVED"
+            raw_message = mock_drafts.create.call_args.kwargs["body"]["message"]["raw"]
+            message = BytesParser(policy=policy.default).parsebytes(base64.urlsafe_b64decode(raw_message))
+            assert message["To"] == "recruiter@testcomp.test"
+
+
+def test_create_draft_without_verified_email_leaves_recipient_empty(db_session):
+    job = Job(company_name="TestComp", source="test", title="Engineer", url="http://test.com", status="DRAFT_CREATED", content_hash="no-email")
+    db_session.add(job)
+    db_session.commit()
+    application = Application(job_id=job.id, draft_subject="Subject", draft_body="Job URL: http://test.com", status="DRAFT_CREATED", recruiter_email="careers@test.com", recruiter_email_status="NOT_FOUND")
+    db_session.add(application)
+    db_session.commit()
+
+    with patch("job_agent.core.gmail.GmailService._authenticate", return_value=MagicMock()):
+        with patch("job_agent.core.gmail.build") as mock_build:
+            mock_service = MagicMock()
+            mock_build.return_value = mock_service
+            mock_service.users.return_value.drafts.return_value.create.return_value.execute.return_value = {"id": "manual-draft"}
+            gmail_service = GmailService(db_session)
+            assert gmail_service.create_draft(application) is True
+            raw_message = mock_service.users.return_value.drafts.return_value.create.call_args.kwargs["body"]["message"]["raw"]
+            message = BytesParser(policy=policy.default).parsebytes(base64.urlsafe_b64decode(raw_message))
+            assert message["To"] is None
 
 def test_process_pending_drafts(db_session):
     job = Job(
