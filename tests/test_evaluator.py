@@ -169,3 +169,34 @@ def test_already_evaluated_job_does_not_call_gemini(db_session):
 
     assert matched is True
     mock_llm.generate_structured_response.assert_not_called()
+
+
+def test_matched_empty_resume_is_resolved_deterministically(db_session):
+    db_session.add(CandidateProfile(profile_data={"skills_summary": "Finance"}, career_level="entry_level"))
+    db_session.add(Resume(filename="finance.pdf", domains=["bank_it"], extracted_text="Finance accounting and audit experience."))
+    job = Job(company_name="TestComp", source="test", title="Management Trainee Finance", description="Entry-level finance and accounting role.", url="http://test.com/job7", status="NEW", content_hash="stu")
+    db_session.add(job)
+    db_session.commit()
+
+    mock_llm = MagicMock()
+    mock_llm.generate_structured_response.return_value = EvaluationResult(is_entry_level=True, confidence=.95, reason="entry-level", selected_resume_domain="")
+
+    assert JobEvaluator(db_session, mock_llm).evaluate_job(job) is True
+    assert job.status == "MATCHED"
+    assert job.selected_resume == "bank_it"
+    mock_llm.generate_structured_response.assert_called_once()
+
+
+def test_matched_result_without_suitable_resume_is_not_persisted(db_session):
+    db_session.add(CandidateProfile(profile_data={"skills_summary": "History"}, career_level="entry_level"))
+    db_session.add(Resume(filename="software.pdf", domains=["software_engineering"], extracted_text="Python web development."))
+    job = Job(company_name="TestComp", source="test", title="Management Trainee Finance", description="Entry-level finance and accounting role.", url="http://test.com/job8", status="NEW", content_hash="vwx")
+    db_session.add(job)
+    db_session.commit()
+
+    mock_llm = MagicMock()
+    mock_llm.generate_structured_response.return_value = EvaluationResult(is_entry_level=True, confidence=.95, reason="entry-level", selected_resume_domain="")
+
+    assert JobEvaluator(db_session, mock_llm).evaluate_job(job) is False
+    assert job.status == "IGNORED"
+    assert job.selected_resume is None
