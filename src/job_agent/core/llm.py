@@ -33,6 +33,7 @@ class LLMService:
         self.success_count = 0
         self.failure_count = 0
         self.retry_429_count = 0
+        self.call_count = 0
 
     def _is_quota_error(self, err: Exception) -> bool:
         message = str(err).lower()
@@ -76,6 +77,7 @@ class LLMService:
             self._wait_for_rate_limit()
             self._last_request_ts = time.monotonic()
             try:
+                self.call_count += 1
                 response = self.client.models.generate_content(
                     model=self.model,
                     contents=prompt,

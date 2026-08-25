@@ -87,8 +87,9 @@ class JobEvaluator:
 
     @staticmethod
     def passes_entry_level_prefilter(job: Job) -> bool:
-        text = f"{job.title or ''} {job.description or ''}".lower()
-        return any(keyword in text for keyword in ENTRY_LEVEL_KEYWORDS)
+        raw_text = f"{job.title or ''} {job.description or ''}".lower()
+        normalized_text = re.sub(r'[^a-z0-9\s]', ' ', raw_text)
+        return any(keyword in raw_text or keyword in normalized_text for keyword in ENTRY_LEVEL_KEYWORDS)
         
     def evaluate_job(self, job: Job) -> bool:
         """

@@ -3,6 +3,8 @@ pydantic-settings>=2.0.3
 sqlalchemy>=2.0.21
 alembic>=1.12.0
 python-dotenv>=1.0.0
+fastapi>=0.100.0
+uvicorn>=0.22.0
 
 # Future phases
 httpx>=0.25.0

@@ -32,6 +32,33 @@ def init_db():
                 if column_name not in existing_columns:
                     connection.execute(text(f"ALTER TABLE applications ADD COLUMN {column_name} {column_type}"))
 
+        existing_run_columns = {column["name"] for column in inspect(engine).get_columns("job_runs")}
+        run_additions = {
+            "run_uuid": "VARCHAR",
+            "completed_at": "DATETIME",
+            "trigger_type": "VARCHAR DEFAULT 'SCHEDULED'",
+            "agent_version": "VARCHAR",
+            "duplicate_jobs": "INTEGER DEFAULT 0",
+            "jobs_prefiltered": "INTEGER DEFAULT 0",
+            "jobs_evaluated": "INTEGER DEFAULT 0",
+            "jobs_matched": "INTEGER DEFAULT 0",
+            "jobs_ignored": "INTEGER DEFAULT 0",
+            "applications_generated": "INTEGER DEFAULT 0",
+            "gmail_drafts_created": "INTEGER DEFAULT 0",
+            "recruiter_emails_verified": "INTEGER DEFAULT 0",
+            "recruiter_emails_not_found": "INTEGER DEFAULT 0",
+            "llm_calls": "INTEGER DEFAULT 0",
+            "llm_successes": "INTEGER DEFAULT 0",
+            "llm_failures": "INTEGER DEFAULT 0",
+            "rate_limit_retries": "INTEGER DEFAULT 0",
+            "error_count": "INTEGER DEFAULT 0",
+            "failure_summary": "VARCHAR",
+        }
+        with engine.begin() as connection:
+            for column_name, column_type in run_additions.items():
+                if column_name not in existing_run_columns:
+                    connection.execute(text(f"ALTER TABLE job_runs ADD COLUMN {column_name} {column_type}"))
+
 def get_db():
     db = SessionLocal()
     try:
