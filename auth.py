@@ -14,13 +14,20 @@ def main():
     
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            if not os.path.exists('credentials.json'):
+            try:
+                creds.refresh(Request())
+            except Exception as e:
+                print(f"Token refresh failed ({e}). Re-authenticating...")
+                creds = None
+
+        if not creds:
+            creds_file = 'credentials.json' if os.path.exists('credentials.json') else ('new_credentials.json' if os.path.exists('new_credentials.json') else None)
+            if not creds_file:
                 print("No token or credentials.json found. Please put credentials.json in this folder.")
                 return
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(creds_file, SCOPES)
             creds = flow.run_local_server(port=0)
+
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
             print("Successfully authenticated and generated token.json!")

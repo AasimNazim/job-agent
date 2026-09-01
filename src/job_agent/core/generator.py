@@ -73,8 +73,8 @@ class ApplicationGenerator:
                 kept_sentences.append(normalized)
 
         polished = "\n\n".join(kept_sentences)
-        if cls._word_count(polished) > 180:
-            words = polished.split()[:180]
+        if cls._word_count(polished) > 110:
+            words = polished.split()[:110]
             polished = " ".join(words).rstrip(" ,;:")
             if polished and polished[-1] not in ".!?":
                 polished += "."
@@ -103,32 +103,31 @@ class ApplicationGenerator:
             logger.info(f"Resolved resume for job {job.id}: {selected_resume}")
             
         resume = self._get_resume(job.selected_resume)
-        resume_text = resume.extracted_text if resume and resume.extracted_text else "Resume text unavailable."
+        resume_text_truncated = (resume.extracted_text if resume and resume.extracted_text else "Resume text unavailable.")[:1200]
+        job_desc_truncated = (job.description or "")[:1000]
         
         prompt = f"""
-        You are an expert copywriter and career coach helping a candidate apply for a job.
-        
-        Write a professional, concise, highly tailored application email for this job.
+        You are a job candidate writing a short, clean, human cover letter email.
         
         Candidate Name: {self.candidate.profile_data.get('full_name', '')}
         Candidate Email: {self.candidate.profile_data.get('email', '')}
         Candidate Skills: {self.candidate.profile_data.get('skills_summary', '')}
-        Candidate Resume Content (use only 1-2 relevant facts; do not reproduce it):
-        {resume_text}
+        Resume Excerpt:
+        {resume_text_truncated}
         
         Job Title: {job.title}
         Company: {job.company_name}
-        Job Description:
-        {job.description}
+        Job Description Excerpt:
+        {job_desc_truncated}
         
         Instructions:
-        1. First identify the top 2-3 concrete requirements in the job description, then use only the strongest 1-2 matching resume qualifications.
-        2. Use 120-180 words, preferably 140-160. Do not write a second resume or list projects.
-        3. Do not mention CGPA, GPA, unrelated metrics, or unrelated experience unless explicitly requested by the job.
-        4. Do not repeat achievements, statistics, technologies, or copied phrases from the resume. Do not invent anything.
-        5. Prioritize the job requirements over generic company praise; mention the company naturally once.
-        6. Structure: specific opening, two concise evidence-focused middle paragraphs, brief thank-you closing.
-        7. Address the Hiring Team. Return only the letter body; the application subject is set by the system.
+        1. Keep the total email body between 70 and 100 words max.
+        2. Write in a clear, natural, direct, and professional human tone.
+        3. Do NOT use heavy corporate jargon or robotic buzzwords (avoid words like 'meticulous', 'disciplined approach', 'honed', 'spearheaded', 'synergy', 'cross-functional').
+        4. Opening: State application for the {job.title} position at {job.company_name} in 1 simple sentence.
+        5. Middle: 2 short sentences linking 1-2 key matching technical skills to the job description.
+        6. Closing: 1 brief thank-you sentence expressing interest in discussing the role.
+        7. Address 'Dear Hiring Team,'. Return only the letter body in the JSON response; subject is set by system.
         
         Return your result as JSON.
         """
