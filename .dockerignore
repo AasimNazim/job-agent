@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+.env
+*.db
+*.db-wal
+*.db-shm
+__pycache__
+.pytest_cache
+dist
+*.egg-info
+frontend-design/node_modules
+frontend-design/dist

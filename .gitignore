@@ -2,9 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -15,14 +18,28 @@ ENV/
 *.sqlite3
 *.db-shm
 *.db-wal
+*.backup
 
-# Project specific
+# Credentials & Tokens
 token.json
 credentials.json
 new_credentials.json
+
+# Resumes & Private Personal PDFs
 resumes/*.pdf
+Resume/
 !resumes/.gitkeep
 !resumes/README.md
+
+# Build & Dependencies
+node_modules/
+dist/
+frontend-design/node_modules/
+frontend-design/dist/
+
+# Temporary / Local Workspace Archives
+*.zip
+architecture_report.txt
 
 # OS generated files
 .DS_Store
