@@ -71,3 +71,24 @@ def test_429_permanent_failure(monkeypatch):
     assert service.retry_429_count == 3
     assert service.failure_count == 1
     assert service.client.models.call_count == 4
+
+
+def test_503_retry_then_success(monkeypatch):
+    monkeypatch.setattr("job_agent.core.llm.time.sleep", lambda _s: None)
+
+    service = LLMService(api_key="test-key")
+    service.client = FakeClient(
+        [
+            Exception("503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand.'}}"),
+            FakeResponse('{"value":"recovered"}'),
+        ]
+    )
+
+    result = service.generate_structured_response("prompt", SimpleSchema)
+
+    assert result.value == "recovered"
+    assert service.success_count == 1
+    assert service.retry_429_count == 1
+    assert service.failure_count == 0
+    assert service.client.models.call_count == 2
+

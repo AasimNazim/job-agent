@@ -35,15 +35,18 @@ class LLMService:
         self.retry_429_count = 0
         self.call_count = 0
 
-    def _is_quota_error(self, err: Exception) -> bool:
+    def _is_transient_error(self, err: Exception) -> bool:
         message = str(err).lower()
         status_code = getattr(err, "status_code", None)
         code = getattr(err, "code", None)
         return (
-            status_code == 429
-            or code == 429
+            status_code in (429, 500, 502, 503, 504)
+            or code in (429, 500, 502, 503, 504)
             or "resource_exhausted" in message
             or "429" in message
+            or "503" in message
+            or "unavailable" in message
+            or "high demand" in message
             or "quota" in message
         )
 
@@ -95,12 +98,12 @@ class LLMService:
                 return schema.model_validate_json(response.text)
 
             except Exception as e:
-                if self._is_quota_error(e) and attempt < self.max_retries:
+                if self._is_transient_error(e) and attempt < self.max_retries:
                     retry_delay = self._extract_retry_delay_seconds(e)
                     sleep_for = retry_delay if retry_delay > 0 else backoff_seconds
                     self.retry_429_count += 1
                     logger.warning(
-                        f"Gemini quota hit (attempt {attempt + 1}/{self.max_retries + 1}). "
+                        f"Gemini API transient error/quota hit (attempt {attempt + 1}/{self.max_retries + 1}): {e}. "
                         f"Retrying in {sleep_for:.1f}s."
                     )
                     time.sleep(sleep_for)
