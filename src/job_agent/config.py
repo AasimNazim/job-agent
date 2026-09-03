@@ -1,9 +1,13 @@
 from pydantic_settings import BaseSettings
+from pydantic import Field, AliasChoices
 from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    database_url: str = "sqlite:///job_agent.db"
+    database_url: str = Field(
+        "sqlite:///job_agent.db",
+        validation_alias=AliasChoices("DATABASE_URL", "DASHBOARD_DATABASE_URL", "database_url")
+    )
 
     # Agent settings
     dry_run: bool = True

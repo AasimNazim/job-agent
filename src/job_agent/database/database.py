@@ -11,9 +11,14 @@ from ..models.recruiter import Recruiter
 from ..models.application import Application
 from ..models.notification import Notification, JobRun
 
+db_url = settings.database_url
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
 engine = create_engine(
-    settings.database_url,
-    connect_args={"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+    db_url,
+    connect_args={"check_same_thread": False} if db_url.startswith("sqlite") else {},
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -164,7 +164,7 @@ class DashboardService:
             func.sum(JobRun.drafts_created).label("applied")
         ).filter(JobRun.started_at >= range_start).group_by(func.date(JobRun.started_at)).all()
         
-        timeline_dict = {row.date: row for row in timeline_query if row.date}
+        timeline_dict = {str(row.date): row for row in timeline_query if row.date}
         timeline = []
         for i in range(days + 1):
             d = (range_start + timedelta(days=i)).strftime("%Y-%m-%d")

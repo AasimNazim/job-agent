@@ -13,11 +13,14 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 DEFAULT_DATABASE_URL = f"sqlite:///{(REPOSITORY_ROOT / 'job_agent.db').as_posix()}"
-DATABASE_URL = os.getenv("DASHBOARD_DATABASE_URL", DEFAULT_DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DASHBOARD_DATABASE_URL") or DEFAULT_DATABASE_URL
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+    pool_pre_ping=True,
 )
 
 if DATABASE_URL.startswith("sqlite"):
