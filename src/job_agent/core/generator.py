@@ -11,6 +11,7 @@ from ..models.application import Application
 from ..models.company import Company
 from .recruiter_email import RecruiterEmailDiscovery
 from .evaluator import JobEvaluator
+from ..utils.url import normalize_url
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +93,44 @@ class ApplicationGenerator:
         if job.status != "MATCHED":
             logger.error(f"Job {job.id} is not ready for draft generation: status={job.status}.")
             return None
+
+        # --- APPLICATION-LEVEL IDEMPOTENCY GUARD ---
+        existing_app = self.db.query(Application).filter_by(job_id=job.id).first()
+
+        if not existing_app and job.url:
+            norm_target_url = normalize_url(job.url)
+            all_apps = self.db.query(Application).join(Job, Application.job_id == Job.id).all()
+            for app in all_apps:
+                app_job = self.db.query(Job).filter_by(id=app.job_id).first()
+                if app_job and (app_job.url == job.url or (app_job.url and normalize_url(app_job.url) == norm_target_url)):
+                    existing_app = app
+                    break
+
+        if not existing_app and job.source_job_id and job.company_name:
+            all_apps = self.db.query(Application).join(Job, Application.job_id == Job.id).filter(
+                Job.company_name == job.company_name,
+                Job.source_job_id == job.source_job_id
+            ).all()
+            if all_apps:
+                existing_app = all_apps[0]
+
+        if not existing_app and not job.url and not job.source_job_id:
+            norm_title = job.title.strip().lower() if job.title else ""
+            all_apps = self.db.query(Application).join(Job, Application.job_id == Job.id).filter(
+                Job.company_name == job.company_name
+            ).all()
+            for app in all_apps:
+                app_job = self.db.query(Job).filter_by(id=app.job_id).first()
+                if app_job and app_job.title and app_job.title.strip().lower() == norm_title:
+                    existing_app = app
+                    break
+
+        if existing_app:
+            logger.info(f"Skipping duplicate application: existing application found for job {job.id} ({job.company_name} - {job.title}).")
+            if job.status == "MATCHED":
+                job.status = "DRAFT_CREATED"
+                self.db.commit()
+            return existing_app
 
         if not job.selected_resume or not self._get_resume(job.selected_resume):
             selected_resume = JobEvaluator.select_resume_domain(job, self.db.query(Resume).all())

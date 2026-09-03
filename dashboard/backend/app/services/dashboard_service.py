@@ -72,18 +72,21 @@ class DashboardService:
 
     def overview(self) -> dict:
         latest = self.latest_run()
+        run_objects = self._run_objects()
         successful = max(
-            (run for run in self._run_objects() if run.status == "SUCCEEDED"),
+            (run for run in run_objects if run.status == "SUCCEEDED"),
             key=lambda run: (run.completed_at or datetime.min, run.id or 0),
             default=None,
         )
-        current_jobs = self.db.query(func.count(Job.id)).scalar()
-        current_matched = self.db.query(func.count(Job.id)).filter(Job.status == "MATCHED").scalar()
-        current_rejected = self.db.query(func.count(Job.id)).filter(Job.status == "IGNORED").scalar()
-        current_applications = self.db.query(func.count(Application.id)).scalar()
+        current_rejected = self.db.query(func.count(Job.id)).filter(Job.status == "IGNORED").scalar() or 0
+        current_applications = self.db.query(func.count(Application.id)).scalar() or 0
 
-        if latest is None:
-            run_metrics = {field: None for field in (
+        jobs_matched = sum((getattr(r, "jobs_matched", 0) or 0) for r in run_objects) if run_objects else (
+            self.db.query(func.count(Job.id)).filter(Job.status.in_(["MATCHED", "DRAFT_CREATED"])).scalar() or 0
+        )
+
+        if not run_objects:
+            run_metrics = {field: 0 for field in (
                 "jobs_discovered", "companies_scanned", "duplicate_jobs_removed",
                 "llm_calls", "llm_successes", "llm_failures", "rate_limit_retries",
                 "recruiter_emails_verified", "recruiter_emails_not_found",
@@ -91,23 +94,23 @@ class DashboardService:
             last_status = last_started = last_duration = None
         else:
             run_metrics = {
-                "jobs_discovered": latest.jobs_discovered,
-                "companies_scanned": latest.companies_scanned,
-                "duplicate_jobs_removed": latest.duplicate_jobs,
-                "llm_calls": latest.llm_calls,
-                "llm_successes": latest.llm_successes,
-                "llm_failures": latest.llm_failures,
-                "rate_limit_retries": latest.rate_limit_retries,
-                "recruiter_emails_verified": latest.recruiter_emails_verified,
-                "recruiter_emails_not_found": latest.recruiter_emails_not_found,
+                "jobs_discovered": latest.jobs_discovered if latest else 0,
+                "companies_scanned": latest.companies_scanned if latest else 0,
+                "duplicate_jobs_removed": sum((getattr(r, "duplicate_jobs", 0) or 0) for r in run_objects),
+                "llm_calls": sum((getattr(r, "llm_calls", 0) or 0) for r in run_objects),
+                "llm_successes": sum((getattr(r, "llm_successes", 0) or 0) for r in run_objects),
+                "llm_failures": sum((getattr(r, "llm_failures", 0) or 0) for r in run_objects),
+                "rate_limit_retries": sum((getattr(r, "rate_limit_retries", 0) or 0) for r in run_objects),
+                "recruiter_emails_verified": sum((getattr(r, "recruiter_emails_verified", 0) or 0) for r in run_objects),
+                "recruiter_emails_not_found": sum((getattr(r, "recruiter_emails_not_found", 0) or 0) for r in run_objects),
             }
-            last_status = latest.status
-            last_started = latest.started_at
-            last_duration = self._duration_seconds(latest)
+            last_status = latest.status if latest else None
+            last_started = latest.started_at if latest else None
+            last_duration = self._duration_seconds(latest) if latest else None
 
         return {
             **run_metrics,
-            "jobs_matched": current_matched,
+            "jobs_matched": jobs_matched,
             "jobs_rejected": current_rejected,
             "applications_generated": current_applications,
             "last_run_status": last_status,
@@ -160,7 +163,7 @@ class DashboardService:
         timeline_query = self.db.query(
             func.date(JobRun.started_at).label("date"),
             func.sum(JobRun.jobs_discovered).label("discovered"),
-            func.sum(JobRun.new_jobs).label("matched"),
+            func.sum(JobRun.jobs_matched).label("matched"),
             func.sum(JobRun.drafts_created).label("applied")
         ).filter(JobRun.started_at >= range_start).group_by(func.date(JobRun.started_at)).all()
         
@@ -187,23 +190,23 @@ class DashboardService:
         # 2. Funnel
         funnel_stats = self.db.query(
             func.sum(JobRun.jobs_discovered).label("discovered"),
-            func.sum(JobRun.new_jobs).label("prefiltered"),
-            func.sum(JobRun.new_jobs).label("evaluated"),
-            func.sum(JobRun.new_jobs).label("matched"),
+            func.sum(JobRun.jobs_prefiltered).label("prefiltered"),
+            func.sum(JobRun.jobs_evaluated).label("evaluated"),
+            func.sum(JobRun.jobs_matched).label("matched"),
             func.sum(JobRun.drafts_created).label("draft_generated"),
-            func.sum(JobRun.drafts_created).label("gmail_draft")
+            func.sum(JobRun.gmail_drafts_created).label("gmail_draft")
         ).filter(JobRun.started_at >= range_start).first()
         
-        disc = funnel_stats.discovered or 0
+        disc = (funnel_stats.discovered if funnel_stats else 0) or 0
         def pct(count): return int(round(count / disc * 100)) if disc > 0 else 0
         
         funnel = [
             {"stage": "Discovered", "count": disc, "pct": 100 if disc > 0 else 0},
-            {"stage": "Pre-filtered", "count": funnel_stats.prefiltered or 0, "pct": pct(funnel_stats.prefiltered or 0)},
-            {"stage": "Evaluated", "count": funnel_stats.evaluated or 0, "pct": pct(funnel_stats.evaluated or 0)},
-            {"stage": "Matched", "count": funnel_stats.matched or 0, "pct": pct(funnel_stats.matched or 0)},
-            {"stage": "Draft Generated", "count": funnel_stats.draft_generated or 0, "pct": pct(funnel_stats.draft_generated or 0)},
-            {"stage": "Gmail Draft", "count": funnel_stats.gmail_draft or 0, "pct": pct(funnel_stats.gmail_draft or 0)},
+            {"stage": "Pre-filtered", "count": (funnel_stats.prefiltered if funnel_stats else 0) or 0, "pct": pct((funnel_stats.prefiltered if funnel_stats else 0) or 0)},
+            {"stage": "Evaluated", "count": (funnel_stats.evaluated if funnel_stats else 0) or 0, "pct": pct((funnel_stats.evaluated if funnel_stats else 0) or 0)},
+            {"stage": "Matched", "count": (funnel_stats.matched if funnel_stats else 0) or 0, "pct": pct((funnel_stats.matched if funnel_stats else 0) or 0)},
+            {"stage": "Draft Generated", "count": (funnel_stats.draft_generated if funnel_stats else 0) or 0, "pct": pct((funnel_stats.draft_generated if funnel_stats else 0) or 0)},
+            {"stage": "Gmail Draft", "count": (funnel_stats.gmail_draft if funnel_stats else 0) or 0, "pct": pct((funnel_stats.gmail_draft if funnel_stats else 0) or 0)},
         ]
         
         # 3. Top Companies

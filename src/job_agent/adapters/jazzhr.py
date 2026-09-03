@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from .base import JobSourceAdapter
 from ..models.company import Company
 from ..models.job import Job
+from ..utils.url import generate_canonical_content_hash
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +65,14 @@ class JazzhrAdapter(JobSourceAdapter):
                     apply_idx = url_parts.index('apply')
                     if apply_idx + 1 < len(url_parts):
                         source_job_id = url_parts[apply_idx + 1]
-                        
+
                 # Create a stable hash to deduplicate jobs uniquely
-                hash_input = f"{company.name}|{title}|{location_str}|{url}".encode('utf-8')
-                content_hash = hashlib.sha256(hash_input).hexdigest()
+                content_hash = generate_canonical_content_hash(
+                    company_name=company.name,
+                    title=title,
+                    url=url,
+                    source_job_id=source_job_id
+                )
                 
                 job = Job(
                     company_name=company.name,
