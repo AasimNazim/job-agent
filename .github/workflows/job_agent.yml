@@ -14,18 +14,13 @@ jobs:
       group: autonomous-job-agent-${{ github.ref }}
       cancel-in-progress: false
     runs-on: ubuntu-latest
-    
-    # We need contents: write to be able to push the database back
+
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          # Important: Fetch full history so we can commit and re-sync against main.
-          ref: main
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -47,38 +42,8 @@ jobs:
           
       - name: Run Job Agent
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PYTHONPATH: src
         run: |
           python -m job_agent
-          
-      - name: Commit and Push Database State
-        run: |
-          set -e
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # Preserve the generated DB state before syncing with the latest remote branch.
-          if [ -f job_agent.db ]; then
-            git stash push -m "job_agent.db before sync" -- job_agent.db || true
-          fi
-
-          # Ignore generated egg-info metadata produced by editable installs.
-          git restore --staged --worktree src/job_agent.egg-info 2>/dev/null || true
-
-          git fetch origin main --prune
-          git rebase origin/main
-
-          # Restore the database change after the branch is synchronized.
-          git stash pop || true
-
-          git add job_agent.db
-
-          # Only commit and push when the database actually changed.
-          if git diff --cached --quiet -- job_agent.db; then
-            echo "No database changes to commit."
-            exit 0
-          fi
-
-          git commit -m "chore: auto-update job_agent.db state [skip ci]"
-          git push origin HEAD:main
