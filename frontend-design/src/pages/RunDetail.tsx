@@ -128,6 +128,7 @@ export default function RunDetail({ runUuid, onBack }: RunDetailProps) {
       items: [
         { label: "Jobs Matched", value: run.jobsMatched ?? "—" },
         { label: "Drafts Generated", value: run.draftsCreated ?? "—" },
+        { label: "Gmail Drafts", value: run.gmailDraftsCreated ?? "—" },
       ],
     },
     {

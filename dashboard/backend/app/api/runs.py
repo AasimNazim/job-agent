@@ -27,6 +27,7 @@ def serialize_run(run) -> RunResponse:
         jobs_matched=run.jobs_matched,
         applications_generated=run.applications_generated,
         drafts_created=run.drafts_created,
+        gmail_drafts_created=getattr(run, "gmail_drafts_created", None),
         recruiter_emails_verified=run.recruiter_emails_verified,
         recruiter_emails_not_found=run.recruiter_emails_not_found,
         llm_calls=run.llm_calls,

@@ -67,6 +67,7 @@ export interface RawRunResponse {
   jobs_matched: number | null;
   applications_generated: number | null;
   drafts_created: number | null;
+  gmail_drafts_created: number | null;
   recruiter_emails_verified: number | null;
   recruiter_emails_not_found: number | null;
   llm_calls: number | null;
@@ -157,6 +158,7 @@ export interface AgentRun {
   jobsMatched: number | null;
   applicationsGenerated: number | null;
   draftsCreated: number | null;
+  gmailDraftsCreated: number | null;
   recruiterEmailsVerified: number | null;
   recruiterEmailsNotFound: number | null;
   llmCalls: number | null;

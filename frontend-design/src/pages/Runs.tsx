@@ -81,7 +81,7 @@ export default function Runs({ onViewDetail }: RunsProps) {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[#E2E8F0]">
-                {["Run ID", "Date / Time", "Trigger", "Discovered", "Matched", "Drafts", "Verified", "Duration", "Status", ""].map((h) => (
+                {["Run ID", "Date / Time", "Trigger", "Discovered", "Pre-filtered", "Evaluated", "Matched", "Drafts", "Verified", "Duration", "Status", ""].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-[#64748B] font-medium">{h}</th>
                 ))}
               </tr>
@@ -101,6 +101,8 @@ export default function Runs({ onViewDetail }: RunsProps) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.jobsDiscovered ?? "—"}</td>
+                  <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.jobsAfterPrefilter ?? "—"}</td>
+                  <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.jobsEvaluated ?? "—"}</td>
                   <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.jobsMatched ?? "—"}</td>
                   <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.draftsCreated ?? "—"}</td>
                   <td className="px-4 py-3 text-[#0F172A] tabular-nums">{run.recruiterEmailsVerified ?? "—"}</td>

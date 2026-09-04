@@ -19,6 +19,7 @@ class RunResponse(BaseModel):
     jobs_matched: int | None
     applications_generated: int | None
     drafts_created: int | None
+    gmail_drafts_created: int | None = None
     recruiter_emails_verified: int | None
     recruiter_emails_not_found: int | None
     llm_calls: int | None
