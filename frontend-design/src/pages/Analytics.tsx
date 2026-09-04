@@ -32,9 +32,11 @@ export default function Analytics() {
       .catch((err: any) => setError(err.message || "Failed to load analytics"))
       .finally(() => setLoading(false));
 
-    dashboardApi.getSystemHealth()
-      .then(setSystemHealth)
-      .catch(() => {/* silent */});
+    if (localStorage.getItem("dashboard_token")) {
+      dashboardApi.getSystemHealth()
+        .then(setSystemHealth)
+        .catch(() => {/* silent */});
+    }
   }, []);
 
   const healthItems = [

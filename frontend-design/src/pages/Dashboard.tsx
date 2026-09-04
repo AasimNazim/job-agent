@@ -97,12 +97,19 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
     try {
       setLoading(true);
       setError(null);
-      const [overviewData, runsData] = await Promise.all([
-        dashboardApi.getOverview(),
-        runsApi.getRuns(1, 5)
-      ]);
+      const overviewData = await dashboardApi.getOverview();
       setOverview(overviewData);
-      setRecentRuns(runsData.items);
+
+      if (localStorage.getItem("dashboard_token")) {
+        try {
+          const runsData = await runsApi.getRuns(1, 5);
+          setRecentRuns(runsData.items);
+        } catch {
+          setRecentRuns([]);
+        }
+      } else {
+        setRecentRuns([]);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load dashboard data");
     } finally {
