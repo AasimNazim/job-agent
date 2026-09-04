@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from app.api.auth import require_dashboard_auth
+from app.api.auth import allow_public_or_admin_auth
 from app.db import get_db
 from app.schemas.system import SystemStatusResponse
 from app.services.dashboard_service import DashboardService
@@ -12,7 +12,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/api/dashboard/system", response_model=SystemStatusResponse, dependencies=[Depends(require_dashboard_auth)])
+@router.get("/api/dashboard/system", response_model=SystemStatusResponse, dependencies=[Depends(allow_public_or_admin_auth)])
 def get_system_status(db: Session = Depends(get_db)):
     try:
         return DashboardService(db).system_status()

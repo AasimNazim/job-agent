@@ -10,12 +10,12 @@ def test_public_endpoints_with_demo_mode(unauth_client):
     os.environ["DEMO_MODE"] = "true"
     try:
         # Public allowed endpoints
-        for endpoint in ["/api/dashboard/overview", "/api/dashboard/jobs", "/api/dashboard/companies", "/api/dashboard/analytics"]:
+        for endpoint in ["/api/dashboard/overview", "/api/dashboard/jobs", "/api/dashboard/companies", "/api/dashboard/analytics", "/api/dashboard/system"]:
             res = unauth_client.get(endpoint)
             assert res.status_code == 200, f"Failed on {endpoint}"
             
         # Restricted endpoints return 401
-        for endpoint in ["/api/dashboard/system", "/api/dashboard/runs", "/api/dashboard/applications"]:
+        for endpoint in ["/api/dashboard/runs", "/api/dashboard/applications"]:
             res = unauth_client.get(endpoint)
             assert res.status_code == 401, f"Should be restricted on {endpoint}"
     finally:

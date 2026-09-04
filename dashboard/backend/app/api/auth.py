@@ -7,7 +7,7 @@ strict_security = HTTPBearer(auto_error=True)
 optional_security = HTTPBearer(auto_error=False)
 
 def is_demo_mode_active() -> bool:
-    return os.getenv("DEMO_MODE", "true").lower() in ("true", "1", "yes")
+    return os.getenv("DEMO_MODE", "false").lower() in ("true", "1", "yes")
 
 def require_dashboard_auth(credentials: HTTPAuthorizationCredentials = Depends(strict_security)) -> str:
     expected_token = os.getenv("DASHBOARD_API_TOKEN")

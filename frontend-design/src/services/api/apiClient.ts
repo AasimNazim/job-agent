@@ -41,8 +41,8 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     });
 
     if (!response.ok) {
-      if ((response.status === 401 || response.status === 403) && token) {
-        // Trigger a custom event so the App can route to login if valid token expired/invalid
+      if (response.status === 401 || response.status === 403) {
+        // Trigger a custom event so the App can route to login
         window.dispatchEvent(new Event('auth_error'));
       }
       throw new ApiError(response.status, getErrorMessage(response.status));

@@ -79,9 +79,10 @@ function KpiCard({ label, value, change, trend }: { label: string; value: number
 
 interface DashboardProps {
   onNavigate: (page: Page) => void;
+  isAdmin?: boolean;
 }
 
-export default function Dashboard({ onNavigate }: DashboardProps) {
+export default function Dashboard({ onNavigate, isAdmin = false }: DashboardProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("7d");
 
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
@@ -100,7 +101,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       const overviewData = await dashboardApi.getOverview();
       setOverview(overviewData);
 
-      if (localStorage.getItem("dashboard_token")) {
+      if (isAdmin) {
         try {
           const runsData = await runsApi.getRuns(1, 5);
           setRecentRuns(runsData.items);
@@ -132,7 +133,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -387,11 +388,18 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       <div className="bg-white border border-[#E2E8F0] rounded">
         <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E8F0]">
           <p className="text-sm font-semibold text-[#0F172A]">Recent Agent Runs</p>
-          <button onClick={() => onNavigate("runs")} className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-medium transition-colors">
-            View all
-          </button>
+          {isAdmin && (
+            <button onClick={() => onNavigate("runs")} className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-medium transition-colors">
+              View all
+            </button>
+          )}
         </div>
-        {recentRuns.length === 0 ? (
+        {!isAdmin ? (
+          <div className="p-8 flex flex-col items-center justify-center text-center">
+            <p className="text-sm font-medium text-[#0F172A]">Admin Access Required</p>
+            <p className="text-xs text-[#64748B] mt-1">Execution run history is restricted to admin users.</p>
+          </div>
+        ) : recentRuns.length === 0 ? (
           <div className="p-10 flex flex-col items-center justify-center text-center">
             <p className="text-sm font-medium text-[#0F172A]">No runs found</p>
             <p className="text-xs text-[#64748B] mt-1">The agent has not executed any runs yet.</p>

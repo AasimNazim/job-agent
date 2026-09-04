@@ -82,7 +82,7 @@ export default function App() {
 
     switch (page) {
       case "dashboard":
-        return <Dashboard onNavigate={navigate} />;
+        return <Dashboard onNavigate={navigate} isAdmin={isAdmin} />;
       case "jobs":
         return <Jobs />;
       case "applications":
@@ -98,7 +98,7 @@ export default function App() {
       case "settings":
         return <Settings />;
       default:
-        return <Dashboard onNavigate={navigate} />;
+        return <Dashboard onNavigate={navigate} isAdmin={isAdmin} />;
     }
   }
 
