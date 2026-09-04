@@ -28,7 +28,7 @@ export default function Sidebar({ currentPage, onNavigate, isAdmin, onOpenAdminM
             <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm-1 11.5v-5l4 2.5-4 2.5z" />
           </svg>
         </div>
-        <span className="text-sm font-semibold text-[#0F172A] tracking-tight">AI Job Agent</span>
+        <span className="text-sm font-semibold text-[#0F172A] tracking-tight">JobPilot AI</span>
       </div>
 
       {/* Nav */}

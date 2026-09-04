@@ -1,5 +1,6 @@
 {
-  "description": "Create stunning designs effortlessly with intuitive tools tailored for both beginners and professionals, enhancing creativity and productivity.",
+  "title": "JobPilot AI",
+  "description": "Autonomous AI Job Application Agent Dashboard",
   "robots": {
     "index": false
   },
