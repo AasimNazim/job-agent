@@ -1,6 +1,6 @@
 import os
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import sessionmaker
 
 from job_agent.models.base import Base
@@ -9,6 +9,11 @@ from job_agent.models.job import Job
 
 # Use an in-memory SQLite database for tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
+
+def test_psycopg_driver_is_available():
+    engine = create_engine(URL.create("postgresql+psycopg", host="localhost", database="database"))
+
+    assert engine.dialect.driver == "psycopg"
 
 def test_company_creation(db_session):
     company = Company(name="Test Company", career_url="https://test.com/careers", platform="lever")
